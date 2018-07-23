@@ -21,6 +21,7 @@ public class RoundedHorizontalProgressBar extends ProgressBar {
 
     private int mBackgroundColor = Color.GRAY;
     private int mProgressColor = Color.BLUE;
+    private int mProgressSecondaryColor = Color.BLUE;
     private boolean mIsRounded = true;
 
     public RoundedHorizontalProgressBar(Context context) {
@@ -40,47 +41,53 @@ public class RoundedHorizontalProgressBar extends ProgressBar {
 
     private void init() {
         LayerDrawable layerDrawable;
-        if(mIsRounded) {
+        if (mIsRounded) {
             layerDrawable = (LayerDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_progress_bar_horizontal, null);
         } else {
             layerDrawable = (LayerDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.progress_bar_horizontal, null);
         }
         setProgressDrawable(layerDrawable);
-        setProgressColors(mBackgroundColor, mProgressColor);
+        setProgressColors(mBackgroundColor, mProgressColor, mProgressSecondaryColor);
     }
 
     private void init(Context context, AttributeSet attrs) {
         setUpStyleable(context, attrs);
         LayerDrawable layerDrawable;
-        if(mIsRounded) {
+        if (mIsRounded) {
             layerDrawable = (LayerDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_progress_bar_horizontal, null);
         } else {
             layerDrawable = (LayerDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.progress_bar_horizontal, null);
         }
         setProgressDrawable(layerDrawable);
 
-        setProgressColors(mBackgroundColor, mProgressColor);
+        setProgressColors(mBackgroundColor, mProgressColor, mProgressSecondaryColor);
     }
 
-    private void setUpStyleable(Context context , AttributeSet attrs) {
+    private void setUpStyleable(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundedHorizontalProgress);
 
         mBackgroundColor = typedArray.getColor(R.styleable.RoundedHorizontalProgress_backgroundColor, Color.GRAY);
         mProgressColor = typedArray.getColor(R.styleable.RoundedHorizontalProgress_progressColor, Color.BLUE);
+        mProgressSecondaryColor = typedArray.getColor(R.styleable.RoundedHorizontalProgress_progressSecondaryColor, mProgressColor);
         mIsRounded = typedArray.getBoolean(R.styleable.RoundedHorizontalProgress_isRounded, true);
 
         typedArray.recycle();
     }
 
     public void setProgressColors(int backgroundColor, int progressColor) {
+        setProgressColors(backgroundColor, progressColor, progressColor);
+    }
+
+    public void setProgressColors(int backgroundColor, int progressColor, int secondaryProgress) {
         LayerDrawable layerDrawable = (LayerDrawable) getProgressDrawable();
         GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(android.R.id.background);
         gradientDrawable.setColor(backgroundColor);
 
-        if(mIsRounded) {
+        if (mIsRounded) {
             ScaleDrawable scaleDrawable = (ScaleDrawable) layerDrawable.findDrawableByLayerId(android.R.id.progress);
             GradientDrawable progressGradientDrawable = (GradientDrawable) scaleDrawable.getDrawable();
-            progressGradientDrawable.setColor(progressColor);
+            progressGradientDrawable.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+            progressGradientDrawable.setColors(new int[]{progressColor, secondaryProgress});
             setProgressDrawable(layerDrawable);
         } else {
             ClipDrawable progressDrawable = (ClipDrawable) layerDrawable.findDrawableByLayerId(android.R.id.progress);
@@ -97,9 +104,10 @@ public class RoundedHorizontalProgressBar extends ProgressBar {
 
     /**
      * Method to animate the progress bar from old value to new Value
+     *
      * @param animationDuration Duration of the animation
-     * @param from Old value of Progress
-     * @param to New value of Progress
+     * @param from              Old value of Progress
+     * @param to                New value of Progress
      */
     public void animateProgress(int animationDuration, int from, int to) {
         ProgressBarAnimation progressBarAnimation = new ProgressBarAnimation(this, from, to);
@@ -109,8 +117,9 @@ public class RoundedHorizontalProgressBar extends ProgressBar {
 
     /**
      * Method to animate the progress bar from old value to new Value
+     *
      * @param animationDuration Duration of the animation
-     * @param to New value of Progress
+     * @param to                New value of Progress
      */
     public void animateProgress(int animationDuration, int to) {
         ProgressBarAnimation progressBarAnimation = new ProgressBarAnimation(this, getProgress(), to);
