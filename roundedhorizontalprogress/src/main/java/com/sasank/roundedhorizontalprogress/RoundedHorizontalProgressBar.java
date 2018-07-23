@@ -1,7 +1,6 @@
 package com.sasank.roundedhorizontalprogress;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
