@@ -78,7 +78,7 @@ public class RoundedHorizontalProgressBar extends ProgressBar {
     }
 
     public void setProgressColors(int backgroundColor, int progressColor, int secondaryProgress) {
-        LayerDrawable layerDrawable = (LayerDrawable) getProgressDrawable();
+        LayerDrawable layerDrawable = (LayerDrawable) getProgressDrawable().mutate();
         GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(android.R.id.background);
         gradientDrawable.setColor(backgroundColor);
 
